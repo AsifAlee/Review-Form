@@ -8,9 +8,9 @@ function App() {
   return (
    
       <div className="container">
-        <form>
+    
           <ReviewForm   />
-        </form>
+        
          
       </div>
 
