@@ -1,0 +1,41 @@
+th{
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+    border: 1px solid #ddd;
+}
+
+td{
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table{
+    width: 100%;
+}
+
+.candidates-table .search-bar{
+    margin:15px;
+}
+
+.candidates-table input{
+    padding: 6px;
+    margin-top: 8px;
+    font-size: 17px;
+    border: none;
+    background-color: aliceblue;
+}
+.candidates-table button{
+    
+    padding: 6px 10px;
+    margin-top: 8px;
+    margin-right: 16px;
+    background: #ddd;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+}
+
+

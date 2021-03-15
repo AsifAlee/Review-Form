@@ -1,309 +1,299 @@
 import React, { useState } from 'react';
-import InputComponent from './../input/input.component';
+import './review_form.css';
+import firebaseDb from '../../firebase';
 
-const inputFields = [{ "label": "First Name", "inputType": "text", "placeholder": "First Name..." },
+/* const inputFields = [{ "label": "First Name", "inputType": "text", "placeholder": "First Name..." },
 { "label": "Last Name", "inputType": "text", "placeholder": "Last Name..." },
-{ "label": "Email", "inputType": "email", "placeholder": "Email...." }];
+{ "label": "Email", "inputType": "email", "placeholder": "Email...." }]; */
 
 
-
+var skillsChecked = "";
+var checkboxes = document.getElementsByName('skills');
 const ReviewForm = () => {
+    let initialFieldValues = {
+        firstname: '',
+        lastname: '',
+        email: '',
+        qualification: '',
+        skills: '',
+        status: '',
+        review: ''
+    };
 
-    // const stateObj = [{fname:'',setfname:},{lname:'',setlname:}]
-
-    const [fname, setfname] = useState('');
-    const [lname, setlname] = useState('');
-    const [email, setEmail] = useState('');
-    const [qualification, setqualification] = useState('');
-    const [skills, setSkills] = useState('');
-    const [status, setStatus] = useState('');
-    const [review, setReview] = useState('');
-
-    let fnameField = document.getElementById('fname');
-    let lnameField = document.getElementById('lname');
-    let emailField = document.getElementById('email');
-
+    const [formState, setformState] = useState(initialFieldValues);
     let reviewChkBoxSelected = document.getElementById('selected');
     let reviewChkBoxRejected = document.getElementById('rejected');
 
-    const handleFnameInput = (e) => {
-        setfname(e.target.value);
-        console.log("fname", e.target.value);
+    const handleChange = e => {
+        const { name, value } = e.target;
+        setformState({ ...formState, [name]: value });
+        console.log(formState);
     }
 
+    const handleSelect = e => {
+        const [name, value] = e.target;
+        console.log("value isss:", e.target.value);
+        console.log("name isss:", e.target.name);
+        console.log("select name:", name);
+        console.log("select value is:", value);
+        setformState({ ...formState, ['qualification']: e.target.value });
+        console.log(formState);
 
-    const handleLnameInput = (e) => {
-        setlname(e.target.value);
-        console.log("lname", e.target.value);
     }
-
-
-    const handleEmailInput = (e) => {
-        setEmail(e.target.value);
-        console.log("email", e.target.value);
-    }
-
-    const handleSelect = (e) => {
-        console.log(e.target.value);
-        setqualification(e.target.value);
-    }
-
 
     const handleSkillsCheckBox = (e) => {
-
-        var checkboxes = document.getElementsByName('skills[]');
-        var skillsChecked = "";
+        const { name, value } = e.target;
+        skillsChecked = "";
         console.log("length of checkboxes", checkboxes.length);
         for (var i = 0, n = checkboxes.length; i < n; i++) {
             if (checkboxes[i].checked) {
-                skillsChecked += "," + checkboxes[i].value;
+                skillsChecked += " " + checkboxes[i].value;
             }
         }
-        setSkills(skillsChecked);
-        console.log("skills checked are:", skills);
-    }
+        console.log("skills checked are:", skillsChecked);
+        setformState({ ...formState, [name]: skillsChecked });
+        console.log(formState);
+}
 
     const handleStatusCheckbox = (e) => {
-        var statusCheckboxes = document.getElementsByName('status[]');
-
+        var statusCheckboxes = document.getElementsByName('status');
+        const { name, value } = e.target;
+        console.log("name is:", name);
+        console.log("value is:", value);
         console.log("radio status:", e.target.value);
-        setStatus(e.target.value);
+         setformState({ ...formState, [name]: value });
+
     }
 
     const handleReview = (e) => {
+        const { name, value } = e.target;
         console.log(e.target.value);
-        setReview(e.target.value);
+        setformState({ ...formState, [name]: value });
+        console.log(formState);
+
     }
 
     const handleFormSubmit = (e) => {
+        e.preventDefault();
         console.log("handleFormSubmit Called");
-        var checkboxes = document.getElementsByName('skills[]');
-        var skillsChecked = "";
-        console.log("length of checkboxes", checkboxes.length);
-        for (var i = 0, n = checkboxes.length; i < n; i++) {
-            if (checkboxes[i].checked) {
-                skillsChecked += "," + checkboxes[i].value;
-            }
-        }
-
-        if (skillsChecked == "") {
-            alert("Please check any skill");
-            e.preventDefault();
-        }
-
-        console.log("checked items are:", skillsChecked);
+        console.log(formState);
+     
+        console.log("checked items on handleSubmit:", skillsChecked);
         if (reviewChkBoxSelected.checked == false && reviewChkBoxRejected.checked == false) {
             alert("Plz select status");
             e.preventDefault();
         }
-
-        let stateVar = {
-            firstName: fname, lastName: lname, email: email, qualification: qualification,
-            skills: skills, status: status, review: review
-        };
-        console.log(stateVar);
-
-        localStorage.setItem('interview Form', JSON.stringify(stateVar));
-
-        //alert("fname:"+fname + " ,"+ "email:"+ email + "skills: " + skills + "status:"+ status + "qualification:" + qualification);
-
+        AddToFireDb(formState);
     }
+    const AddToFireDb = (obj) => {
+        console.log("AddToFireDb:", obj);
+        firebaseDb.child("candidates")
+            .push(
+                obj,
+                err => {
+                    if (err)
+                        console.log("error while inserting:" + err);
+                }
+            )
+}
 
 
     return (
-        <form onSubmit={handleFormSubmit}>
-            <h2>Feedback Form</h2>
+        <div className='container'>
+            <form onSubmit={handleFormSubmit}>
+                <h2>Feedback Form</h2>
 
-            <div className="row">
-                <div className="col-25">
-                    <label htmlFor="fname">First Name</label>
+                <div className="row">
+                    <div className="col-25">
+                        <label htmlFor="fname">First Name</label>
+                    </div>
+                    <div className="col-75">
+                        <input type="text"
+                            id="fname" name="firstname"
+                            placeholder="Your name.."
+                            required
+                            onChange={handleChange}
+                        />
+                    </div>
                 </div>
-                <div className="col-75">
-                    <input type="text"
-                        id="fname" name="firstname"
-                        placeholder="Your name.."
-                        required
-                        onChange={handleFnameInput}
-                    />
-                </div>
-            </div>
 
-            <div className="row">
-                <div className="col-25">
-                    <label htmlFor="lname">Last Name</label>
+                <div className="row">
+                    <div className="col-25">
+                        <label htmlFor="lname">Last Name</label>
+                    </div>
+                    <div className="col-75">
+                        <input type="text"
+                            id="lname"
+                            name="lastname"
+                            placeholder="Your last name.."
+                            required
+                            onChange={handleChange}
+                        />
+                    </div>
                 </div>
-                <div className="col-75">
-                    <input type="text"
-                        id="lname"
-                        name="lastname"
-                        placeholder="Your last name.."
-                        required
-                        onChange={handleLnameInput}
-                    />
-                </div>
-            </div>
 
-            <div className="row">
-                <div className="col-25">
-                    <label htmlFor="email">Email</label>
+                <div className="row">
+                    <div className="col-25">
+                        <label htmlFor="email">Email</label>
+                    </div>
+                    <div className="col-75">
+                        <input type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Email:"
+                            required
+                            onChange={handleChange}
+                        />
+                    </div>
                 </div>
-                <div className="col-75">
-                    <input type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Email:"
-                        required
-                        onChange={handleEmailInput}
-                    />
-                </div>
-            </div>
 
-            <div className="row">
-                <div className="col-25">
-                    <label htmlFor="qualification">Highest Qualification
+                <div className="row">
+                    <div className="col-25">
+                        <label htmlFor="qualification">Highest Qualification
                      </label>
+                    </div>
+                    <div className="col-75">
+                        <select required onChange={handleSelect} >
+                            <option value="" name="qualification">--Select--</option>
+                            <option value="Bachelors" name="qualification">Bachelors</option>
+                            <option value="HSSC" name="qualification">HSSC</option>
+                            <option value="SSC" name="qualification">SSC</option>
+                        </select>
+                    </div>
                 </div>
-                <div className="col-75">
-                    <select id="qualification" name="qualification" required onChange={handleSelect} >
-                        <option value="">--Select--</option>
-                        <option value="Bachelors">Bachelors</option>
-                        <option value="HSSC">HSSC</option>
-                        <option value="SSC">SSC</option>
-                    </select>
-                </div>
-            </div>
-            {/* Skills */}
-            <div className='row'>
-                <div className="col-25">
-                    <label htmlFor="skills">Skills
+                {/* Skills */}
+                <div className='row'>
+                    <div className="col-25">
+                        <label htmlFor="skills">Skills
                      </label>
-                </div>
-                <div className='col-75 skillsDiv'>
-                    <div className='checkbox-Div'>
-                        <div>
-                            <input type="checkbox"
-                                name="skills[]"
-                                id="React"
-                                value="React"
-                                onChange={handleSkillsCheckBox} />
-                            <label htmlFor="React">React</label>
+                    </div>
+                    <div className='col-75 skillsDiv'>
+                        <div className='checkbox-Div'>
+                            <div>
+                                <input type="checkbox"
+                                    name="skills"
+                                    id="React"
+                                    value="React"
+                                    onChange={handleSkillsCheckBox} />
+                                <label htmlFor="React">React</label>
+                            </div>
+
+                            <div>
+                                <input type="checkbox"
+                                    name="skills"
+                                    id="Vue"
+                                    value="Vue"
+                                    onChange={handleSkillsCheckBox}
+                                />
+                                <label htmlFor="Vue">Vue</label>
+                            </div>
+
+
+                            <div>
+                                <input type="checkbox"
+                                    name="skills"
+                                    id="Angular"
+                                    value="Angular"
+                                    onChange={handleSkillsCheckBox}
+                                />
+                                <label htmlFor="Angular">Angular</label>
+
+                            </div>
                         </div>
 
-                        <div>
-                            <input type="checkbox"
-                                name="skills[]"
-                                id="Vue"
-                                value="Vue"
-                                onChange={handleSkillsCheckBox}
-                            />
-                            <label htmlFor="Vue">Vue</label>
+                        <div className="checkbox-Div">
+                            <div>
+                                <input type="checkbox"
+                                    name="skills"
+                                    id="Laravel"
+                                    value="Laravel"
+                                    onChange={handleSkillsCheckBox}
+                                />
+                                <label htmlFor="React">Laravel</label>
+                            </div>
+
+                            <div>
+                                <input type="checkbox"
+                                    name="skills"
+                                    id="CodeIgniter"
+                                    value="CodeIgniter"
+                                    onChange={handleSkillsCheckBox}
+                                />
+                                <label htmlFor="Vue">CodeIgniter</label>
+                            </div>
+
+
+                            <div>
+                                <input type="checkbox"
+                                    name="skills"
+                                    id="Django"
+                                    value="Django"
+                                    onChange={handleSkillsCheckBox}
+                                />
+                                <label htmlFor="Angular">Django</label>
+
+                            </div>
+
                         </div>
 
-
-                        <div>
-                            <input type="checkbox"
-                                name="skills[]"
-                                id="Angular"
-                                value="Angular"
-                                onChange={handleSkillsCheckBox}
-                            />
-                            <label htmlFor="Angular">Angular</label>
-
-                        </div>
                     </div>
 
-                    <div className="checkbox-Div">
-                        <div>
-                            <input type="checkbox"
-                                name="skills[]"
-                                id="Laravel"
-                                value="Laravel"
-                                onChange={handleSkillsCheckBox}
-                            />
-                            <label htmlFor="React">Laravel</label>
-                        </div>
+                </div>
 
-                        <div>
-                            <input type="checkbox"
-                                name="skills[]"
-                                id="CodeIgniter"
-                                value="CodeIgniter"
-                                onChange={handleSkillsCheckBox}
-                            />
-                            <label htmlFor="Vue">CodeIgniter</label>
-                        </div>
+                {/* Interview Status */}
 
+                <div className="row">
+                    <div className="col-25">
+                        <label htmlFor="lname">Status</label>
+                    </div>
+                    <div className="col-75">
+                        <input type="radio"
+                            name="status"
+                            id="selected"
+                            value='selected'
+                            onChange={handleStatusCheckbox}
+                        />
+                        <label htmlFor="selected">Selected</label>
 
-                        <div>
-                            <input type="checkbox"
-                                name="skills[]"
-                                id="Django"
-                                value="Django"
-                                onChange={handleSkillsCheckBox}
-                            />
-                            <label htmlFor="Angular">Django</label>
-
-                        </div>
-
+                        <input type="radio"
+                            name="status"
+                            id="rejected"
+                            value='rejected'
+                            onChange={handleStatusCheckbox}
+                        />
+                        <label htmlFor="rejected">Rejected</label>
                     </div>
 
-                </div>
-
-            </div>
-
-            {/* Interview Status */}
-
-            <div className="row">
-                <div className="col-25">
-                    <label htmlFor="lname">Status</label>
-                </div>
-                <div className="col-75">
-                    <input type="radio"
-                        name="status[]"
-                        id="selected"
-                        value='selected'
-                        onChange={handleStatusCheckbox}
-                    />
-                    <label htmlFor="selected">Selected</label>
-
-                    <input type="radio"
-                        name="status[]"
-                        id="rejected"
-                        value='rejected'
-                        onChange={handleStatusCheckbox}
-                    />
-                    <label htmlFor="rejected">Rejected</label>
-                </div>
-
-
-            </div>
-            {/* write a review */}
-            <div className="row">
-                <div className="col-25">
-                    <label htmlFor="review">Review</label>
-                </div>
-                <div className="col-75">
-                    <textarea id="review" name="review" placeholder="Write a review" className="textArea"
-                        required onChange={handleReview}></textarea>
-                </div>
-            </div>
-            {/* Attach a CV button */}
-            <div className="row">
-                <div className="col-25">
 
                 </div>
-                <div className="col-75">
-                    <input type="button" value="Attach CV" />
+                {/* write a review */}
+                <div className="row">
+                    <div className="col-25">
+                        <label htmlFor="review">Review</label>
+                    </div>
+                    <div className="col-75">
+                        <textarea id="review" name="review" placeholder="Write a review" className="textArea"
+                            required onChange={handleReview}></textarea>
+                    </div>
                 </div>
-            </div>
+                {/* Attach a CV button */}
+                <div className="row">
+                    <div className="col-25">
 
-            {/* Submit button */}
-            <div className="submit-btn-div">
-                <input type="submit" value="Submit" />
-            </div>
-        </form>
+                    </div>
+                    <div className="col-75">
+                        <input type="button" value="Attach CV"  className='attach-cv'/>
+                    </div>
+                </div>
+
+                {/* Submit button */}
+                <div className="submit-btn-div">
+                    <input type="submit" value="Submit" />
+                </div>
+            </form>
+
+        </div>
+
     )
-
-
 }
 export default ReviewForm;
