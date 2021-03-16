@@ -5,7 +5,7 @@ import './candidates.style.css';
 const CandidatesData = () => {
     const [candidates, setcandidates] = useState({});
 
-    useEffect(() => {
+     useEffect(() => {
         firebaseDb.child("candidates").on("value", snapShot => {
             console.log("ref while retrieving:",firebaseDb.child('candidates'));
             console.log("from firebase:", snapShot.val());
@@ -13,20 +13,22 @@ const CandidatesData = () => {
             if (snapShot.val() != null)
                 setcandidates({ ...snapShot.val() });
         })
-    }, [])
+    }, ) 
 
-  /*   const handleSearch = () => {
+     const handleSearch = () => {
         let searchCandidate = document.getElementById('searchuser');
         console.log("input value:",searchCandidate.value);
         console.log("firbase ref:",firebaseDb.child('candidates'));
         firebaseDb.child('candidates').orderByChild('firstname').equalTo(searchCandidate.value)
           .on("child_added",(snap) => {
               console.log("the filtered candidate is:",snap.val());
-        
+              setcandidates({...snap.val()});
               
           })
 
-    } */
+    } 
+
+
 
     const filterCandidates = () => {
         var input, filter, table, tr, td, i, txtValue;

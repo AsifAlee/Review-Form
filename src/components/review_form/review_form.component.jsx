@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import './review_form.css';
 import firebaseDb from '../../firebase';
 
-/* const inputFields = [{ "label": "First Name", "inputType": "text", "placeholder": "First Name..." },
+const inputFields = [{ "label": "First Name", "inputType": "text", "placeholder": "First Name..." },
 { "label": "Last Name", "inputType": "text", "placeholder": "Last Name..." },
-{ "label": "Email", "inputType": "email", "placeholder": "Email...." }]; */
+{ "label": "Email", "inputType": "email", "placeholder": "Email...." }];
+
+const skillsCheckboxes = [{ 'id': 'react', 'value': 'React' }, { 'id': 'vue', 'value': 'Vue' }, { 'id': 'angular', 'value': 'Angular' }
+    , { 'id': 'laravel', 'value': 'Laravel' }, { 'id': 'codeigniter', 'value': 'CodeIgniter' }, { 'id': 'django', 'value': 'Django' }]
+
+const statusFields = [{ 'id': 'selected', 'value': 'selected', 'label': 'selected' },
+{ 'id': 'rejected', 'value': 'rejected', 'label': 'rejected' }];
 
 
 var skillsChecked = "";
@@ -53,7 +59,7 @@ const ReviewForm = () => {
         console.log("skills checked are:", skillsChecked);
         setformState({ ...formState, [name]: skillsChecked });
         console.log(formState);
-}
+    }
 
     const handleStatusCheckbox = (e) => {
         var statusCheckboxes = document.getElementsByName('status');
@@ -61,7 +67,7 @@ const ReviewForm = () => {
         console.log("name is:", name);
         console.log("value is:", value);
         console.log("radio status:", e.target.value);
-         setformState({ ...formState, [name]: value });
+        setformState({ ...formState, [name]: value });
 
     }
 
@@ -77,7 +83,7 @@ const ReviewForm = () => {
         e.preventDefault();
         console.log("handleFormSubmit Called");
         console.log(formState);
-     
+
         console.log("checked items on handleSubmit:", skillsChecked);
         if (reviewChkBoxSelected.checked == false && reviewChkBoxRejected.checked == false) {
             alert("Plz select status");
@@ -95,57 +101,33 @@ const ReviewForm = () => {
                         console.log("error while inserting:" + err);
                 }
             )
-}
+    }
 
 
     return (
         <div className='container'>
             <form onSubmit={handleFormSubmit}>
                 <h2>Feedback Form</h2>
+                <div>
+                    {
+                        inputFields.map(field => {
+                            return (
+                                <div className='row'>
+                                    <div className='col-25'>
+                                        <label>{field.label}</label>
+                                    </div>
+                                    <div className='col-75'>
+                                        <input type={field.inputType} placeholder={field.placeholder} onChange={handleChange} />
+                                    </div>
 
-                <div className="row">
-                    <div className="col-25">
-                        <label htmlFor="fname">First Name</label>
-                    </div>
-                    <div className="col-75">
-                        <input type="text"
-                            id="fname" name="firstname"
-                            placeholder="Your name.."
-                            required
-                            onChange={handleChange}
-                        />
-                    </div>
+                                </div>
+                            )
+
+                        })
+                    }
                 </div>
 
-                <div className="row">
-                    <div className="col-25">
-                        <label htmlFor="lname">Last Name</label>
-                    </div>
-                    <div className="col-75">
-                        <input type="text"
-                            id="lname"
-                            name="lastname"
-                            placeholder="Your last name.."
-                            required
-                            onChange={handleChange}
-                        />
-                    </div>
-                </div>
 
-                <div className="row">
-                    <div className="col-25">
-                        <label htmlFor="email">Email</label>
-                    </div>
-                    <div className="col-75">
-                        <input type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Email:"
-                            required
-                            onChange={handleChange}
-                        />
-                    </div>
-                </div>
 
                 <div className="row">
                     <div className="col-25">
@@ -241,31 +223,43 @@ const ReviewForm = () => {
                 </div>
 
                 {/* Interview Status */}
-
-                <div className="row">
+                <div className='row'>
                     <div className="col-25">
                         <label htmlFor="lname">Status</label>
                     </div>
                     <div className="col-75">
-                        <input type="radio"
-                            name="status"
-                            id="selected"
-                            value='selected'
-                            onChange={handleStatusCheckbox}
-                        />
-                        <label htmlFor="selected">Selected</label>
+                        {
+                            statusFields.map(status => {
 
-                        <input type="radio"
-                            name="status"
-                            id="rejected"
-                            value='rejected'
-                            onChange={handleStatusCheckbox}
-                        />
-                        <label htmlFor="rejected">Rejected</label>
+                                return (
+                                    <>
+                                        <input type="radio"
+                                            name="status"
+                                            id={status.id}
+                                            value={status.value}
+                                            onChange={handleStatusCheckbox}
+                                        />
+                                        <label htmlFor="selected">{status.label}</label>
+                                    </>
+
+                                )
+                            })
+                        }
+
+
+
                     </div>
 
 
                 </div>
+
+
+
+
+
+
+
+
                 {/* write a review */}
                 <div className="row">
                     <div className="col-25">
@@ -282,7 +276,7 @@ const ReviewForm = () => {
 
                     </div>
                     <div className="col-75">
-                        <input type="button" value="Attach CV"  className='attach-cv'/>
+                        <input type="button" value="Attach CV" className='attach-cv' />
                     </div>
                 </div>
 
@@ -296,4 +290,5 @@ const ReviewForm = () => {
 
     )
 }
+
 export default ReviewForm;
