@@ -1,15 +1,15 @@
 th{
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding-top: 6px;
+    padding-bottom: 6px;
     text-align: left;
-    background-color: #4CAF50;
+    background-color:#C4BFE8;
     color: white;
     border: 1px solid #ddd;
 }
 
 td{
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 5px;
 }
 
 table{
@@ -22,8 +22,8 @@ table{
 
 .candidates-table input{
     padding: 6px;
-    margin-top: 8px;
-    font-size: 17px;
+    margin-top: 5px;
+    font-size: 12px;
     border: none;
     background-color: aliceblue;
 }
@@ -33,7 +33,7 @@ table{
     margin-top: 8px;
     margin-right: 16px;
     background: #ddd;
-    font-size: 17px;
+    font-size: 12px;
     border: none;
     cursor: pointer;
 }

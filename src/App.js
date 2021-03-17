@@ -1,8 +1,8 @@
 
 import './App.css';
-import './components/review_form/review_form.component';
-import ReviewForm from './components/review_form/review_form.component';
-import CandidatesData from './components/candidates-data/candidates-data.component';
+import './pages/review-form/reviewForm.component';
+import ReviewForm from './pages/review-form/reviewForm.component';
+import CandidatesData from './pages/candidates-list/candidatesList.component';
 import {
   BrowserRouter as Router,
   Switch,
